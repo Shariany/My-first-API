@@ -4,16 +4,15 @@ const app = express();
 
 const PORT = 5000;
 
+//Middleware
+app.use(express.json());
+
 app.get('/',(request, response) => {
     response.send('Welcome to my backend server!');
 });
 
-//https methods : GET, POST, PUT, DELETE
+//Https methods : GET, POST, PUT, DELETE,PATCH
 
-//routes
-//localhost:5000/
-
-//get request
 app.get('/about', (req, res) => {
     response.send('This is the about page');
 });
@@ -42,7 +41,22 @@ app.get('products', (req, res) => {
     ];
     res.json(products)
 })
+//Post request
+app.post('/products', (req, res) => {
 
-app.listen(PORT, ()=> {
-    console.log("Server is running on port" + PORT);
+    const {name, price} = req.body;
+
+    const newProduct = {
+        id: products.length + 1,
+        name,
+        price,
+    }
+
+    res.json({
+        message: "Product has been created successfully",
+        product: newProduct
+    })
 })
+app.listen(PORT, ()=> {
+    console.log('Server is running on http://localhost:${port}');
+});
