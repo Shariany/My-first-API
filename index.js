@@ -1,8 +1,12 @@
 const express = require('express');
+const connectDB = require("./db")
+
+require("dotenv").config();
+
+const Product = require("./models/Product");
 
 const app = express();
 
-const PORT = 5000;
 
 //Middleware
 app.use(express.json());
@@ -51,12 +55,26 @@ app.post('/products', (req, res) => {
         name,
         price,
     }
+    products.push(newProduct);
 
     res.json({
         message: "Product has been created successfully",
         product: newProduct
     })
 })
-app.listen(PORT, ()=> {
-    console.log('Server is running on http://localhost:${port}');
+
+app.post('/save-product', async (req, res) => {
+    try{
+        const product = new Product(req.body);
+        await product.save();
+        res.json(product);
+    } catch (error) {
+       res.status(500).json(error: error.message)
+    }
+})
+
+app.listen(process.env.PORT, ()=> {
+    console.log('Server is running on port '+ pr);
 });
+
+connectDB();
