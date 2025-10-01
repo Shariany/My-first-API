@@ -1,13 +1,16 @@
 const mongoose = requre("mongoose");
+require('dotenv').config();
 
 const connectDB = async () => {
     try {
-        await mongoose.connect("mongodb+srv://vansharian_db_user:<db_password>@cluster0.nyl5ue4.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
-        console.log();
+        await mongoose.connect(process.env.MONGO_URL);
         
+        console.log('MongoDB connected successfully');
+    
     }  catch (error) {
-        console.log(error)
+        console.error('MongoDB connection:', error);
+        process.exit(1);
     }
-}
+};
 
 module.exports = connectDB;

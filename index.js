@@ -32,7 +32,7 @@ app.get('/user/:id', (req, res) => {
 
 //Query parameters
 app.get('/search', (req, res) => {
-    const query = req.query.q;
+    const query = req.query.category;
     res.send('You searched for: ' + query);
 })
 
@@ -45,9 +45,11 @@ app.get('products', (req, res) => {
     ];
     res.json(products)
 })
+let products = []
+
 //Post request
 app.post('/products', (req, res) => {
-
+    
     const {name, price} = req.body;
 
     const newProduct = {
@@ -57,8 +59,8 @@ app.post('/products', (req, res) => {
     }
     products.push(newProduct);
 
-    res.json({
-        message: "Product has been created successfully",
+    res.status(201).json({
+        message: "Product added",
         product: newProduct
     })
 })
@@ -67,14 +69,54 @@ app.post('/save-product', async (req, res) => {
     try{
         const product = new Product(req.body);
         await product.save();
-        res.json(product);
-    } catch (error) {
-       res.status(500).json(error: error.message)
+        res.json({
+            message : "product saved sucessfully to DB",
+            product: product})
+    } 
+    catch (error) {
+       res.status(500).json({error: error.message})
     }
 })
 
+//fetching a product
+app.get('/fetch-product', async (req, res) => {
+    try{
+        const products = await Product.find();
+        response.json(products)
+    } catch (error) {
+        response.status(500).json({error:error.message})
+    }
+})
+
+//updating a product
+app.put('/update-product/:id', async (req,res) => {
+    try {
+        const id = req.params.id;
+        const updatedProduct = await Product.findByIdAndUpdate (id,req.body);
+        res.json({
+            meassage:"Your product has been updated successfully",
+            updatedProduct
+        })
+    } catch (error) {
+        res.status(500).json({error:error.message})
+    }
+})
+
+//deleting a product
+app.delete('/remove-product/:id', async (req, res) => {
+    try{
+        const id = req.params.id;
+        const deleteProduct = await Product.findByIdAndDelete (id,req.body);
+        res.json({
+            message:"Your product has been removed successfully",
+            deleteProduct
+        })
+    }catch (error) {
+        res.status(500).json({error:error.message})
+    }
+})
 app.listen(process.env.PORT, ()=> {
-    console.log('Server is running on port '+ pr);
+    console.log('Server is running on port '+ process.env.PORT);
 });
 
 connectDB();
